@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Flask application instance """
 from flask import Flask, current_app
+from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from config import Config
 
 db = SQLAlchemy()
