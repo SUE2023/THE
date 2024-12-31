@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="Office, intranet, workspace">
+    <meta name="description" content="Office intranet, Office WorkPlace">
+    <meta name="author" content="SE Department">
+    {% if title %}
+        <title>{{ title }} - Office</title>
+    {% else %}
+        <title>{{ _('Welcome to the Office') }}</title>
+    {% endif %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/S.css') }}">
+    {% if 'login' in request.endpoint %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles/Login.css') }}">
+    {% elif 'register' in request.endpoint %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles/Register.css') }}">
+    {% elif 'reset password' in request.endpoint %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles/Reset Password.css') }}">
+    {% endif %}
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <img src="{{ url_for('static', filename='images/DRSapp logo.png') }}" alt="Logo" style="height: 40px; margin-left: 20px;">
+</head>
+<body>
+    {% block content %}
+        <div class="login-container">
+            <h1>{{ _('Sign In') }}</h1>
+            <p>
+                {{ _('New User?') }}
+                <a href="{{ url_for('auth.register') }}">{{ _('Click to Register!') }}</a>
+            </p>
+            <p>
+                {{ _('Forgot Your Password?') }}
+                <a href="{{ url_for('auth.reset_password_request') }}">{{ _('Click to Reset It') }}</a>
+            </p>
+            <form method="POST" action="{{ url_for('auth.login') }}" class="login-form">
+                {{ form.hidden_tag() }}
+                <div class="form-group">
+                    <label for="email">{{ _('Email Address') }}</label>
+                    {{ form.email(id="email") }}
+                    {% for error in form.email.errors %}
+                        <span class="error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    <label for="password">{{ _('Password') }}</label>
+                    {{ form.password(id="password") }}
+                    {% for error in form.password.errors %}
+                        <span class="error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                <button type="submit" class="submit-btn">{{ _('Login') }}</button>
+            </form>
+        </div>
+    {% endblock %}
+</body>
+</html>
+
