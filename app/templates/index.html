@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 class="welcome-message">
+        {{ _('Hi, %(username)s!', username=current_user.username) }}
+    </h1>
+    
+    {% if form %}
+    <div class="form-container">
+        {{ form.hidden_tag() }}
+        <form method="post">
+            {{ form.csrf_token }}
+            {{ form.username.label }} {{ form.username(size=32) }}
+            {{ form.submit(class="btn btn-primary") }}
+        </form>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
