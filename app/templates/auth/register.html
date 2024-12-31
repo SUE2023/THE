@@ -1,0 +1,44 @@
+{% extends "login.html" %}
+
+{% block content %}
+    <div class="register-container">
+        <h1>{{ _('Register') }}</h1>
+        <p>
+            {{ _('Already have an account?') }}
+            <a href="{{ url_for('auth.login') }}">{{ _('Click to Sign In!') }}</a>
+        </p>
+        <form method="POST" action="{{ url_for('auth.register') }}" class="register-form">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                <label for="username">{{ _('Username') }}</label>
+                {{ form.username(id="username") }}
+                {% for error in form.username.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <div class="form-group">
+                <label for="email">{{ _('Email Address') }}</label>
+                {{ form.email(id="email") }}
+                {% for error in form.email.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <div class="form-group">
+                <label for="password">{{ _('Password') }}</label>
+                {{ form.password(id="password") }}
+                {% for error in form.password.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <div class="form-group">
+                <label for="confirm_password">{{ _('Confirm Password') }}</label>
+                {{ form.confirm_password(id="confirm_password") }}
+                {% for error in form.confirm_password.errors %}
+                    <span class="error">{{ error }}</span>
+                {% endfor %}
+            </div>
+            <button type="submit" class="submit-btn">{{ _('Register') }}</button>
+        </form>
+    </div>
+{% endblock %}
+
