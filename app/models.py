@@ -68,6 +68,15 @@ class User(UPaginatedAPIMixin, serMixin, db.Model):
             {'reset_password': self.id, 'exp': time() + expires_in},
             current_app.config['SECRET_KEY'], algorithm='HS256')
 
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(token, current_app.config['SECRET_KEY'],
+                            algorithms=['HS256'])['reset_password']
+        except Exception:
+            return
+        return db.session.get(User, id)
+
     def to_dict(self, include_email=False):
         data = {
             'id': self.id,
@@ -106,13 +115,12 @@ class User(UPaginatedAPIMixin, serMixin, db.Model):
             seconds=1)
 
     @staticmethod
-    def verify_reset_password_token(token):
-        try:
-            id = jwt.decode(token, current_app.config['SECRET_KEY'],
-                            algorithms=['HS256'])['reset_password']
-        except Exception:
-            return
-        return db.session.get(User, id)
+    def check_token(token):
+        user = db.session.scalar(sa.select(User).where(User.token == token))
+        if user is None or user.token_expiration.replace(
+                tzinfo=timezone.utc) < datetime.now(timezone.utc):
+            return None
+        return user
 
 @login.user_loader
 def load_user(id):
