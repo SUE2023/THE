@@ -9,7 +9,11 @@ from flask_migrate import Migrate
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_moment import Moment
+from flask_babel import Babel, lazy_gettext as _l
 from config import Config
+
+def get_locale():
+    return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -18,6 +22,7 @@ login.login_view = 'auth.login'
 login.login_message = _l('Please log in to access this page.')
 mail = Mail()
 moment = Moment(app)
+babel = Babel()
 
 def create_app(config_class=Config):
     app = Flask(__name__)
@@ -28,6 +33,7 @@ def create_app(config_class=Config):
     login.init_app(app)
     mail.init_app(app)
     moment.init_app(app)
+    babel = Babel(app, locale_selector=get_locale)
 
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
