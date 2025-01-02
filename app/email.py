@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
 """Email Module"""
-
+from threading import Thread
+from flask import current_app
 from flask_mail import Message
 from app import mail
 
+def send_async_email(app, msg):
+    with app.app_context():
+        mail.send(msg)
+
 def send_email(subject, sender, recipients, cc=None, bcc=None, text_body=None, html_body=None):
     """
-    Sends an email using Flask-Mail.
+    Sends an email using Flask-Mail, either synchronously or asynchronously.
 
     Parameters:
         - subject (str): Subject of the email.
@@ -26,4 +31,23 @@ def send_email(subject, sender, recipients, cc=None, bcc=None, text_body=None, h
         msg.body = text_body
     if html_body:
         msg.html = html_body
-    mail.send(msg)
+    # Process attachments
+    if attachments:
+        for attachment in attachments:
+            if len(attachment) == 3:  # Ensure correct format
+                msg.attach(*attachment)
+            else:
+                raise ValueError("Each attachment must be a tuple (filename, content, type)")
+
+    # Send email
+    if sync:
+        mail.send(msg)
+    else:
+        Thread(target=send_async_email, args=(current_app._get_current_object(), msg)).start()
+
+def send_async_email(app, msg):
+    """
+    Sends an email asynchronously.
+    """
+    with app.app_context():
+        mail.send(msg)
