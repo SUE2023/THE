@@ -3,7 +3,11 @@
 
 from flask import current_app, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
+import jwt
 from flask_login import UserMixin
+import json
+import secrets
+from time import time
 from typing import Optional
 import sqlalchemy as sa
 import sqlalchemy.orm as so
