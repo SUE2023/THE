@@ -39,8 +39,8 @@
                 {{ form.hidden_tag() }}
                 <div class="form-group">
                     <label for="email">{{ _('Email Address') }}</label>
-                    {{ form.email(id="email") }}
-                    {% for error in form.email.errors %}
+                    {{ form.username(id="email") }}
+                    {% for error in form.username.errors %}
                         <span class="error">{{ error }}</span>
                     {% endfor %}
                 </div>
@@ -59,4 +59,3 @@
  {{ moment.lang(g.locale) }}
 </body>
 </html>
-
