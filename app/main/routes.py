@@ -9,7 +9,6 @@ import sqlalchemy as sa
 from app import db
 from app.main.forms import EditProfileForm, EmptyForm
 from app.models import User
-from app.translate import translate
 from app.main import bp
 
 
