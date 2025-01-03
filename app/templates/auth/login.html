@@ -21,11 +21,15 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='styles/Reset Password.css') }}">
     {% endif %}
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <img src="{{ url_for('static', filename='images/DRSapp logo.png') }}" alt="Logo" style="height: 40px; margin-left: 20px;">
+    <!--<img src="{{ url_for('static', filename='images/DRSapp logo.png') }}" alt="Logo" style="height: 40px; margin-left: 20px;">-->
 </head>
 <body>
     {% block content %}
-        <div class="login-container">
+    <div class="page-container">
+    	<div class="logo-container">
+        	<img src="{{ url_for('static', filename='images/DRSapp logo.png') }}" alt="Logo" class="centered-logo">
+    	</div>
+    	<div class="sign-in-container">
             <h1>{{ _('Sign In') }}</h1>
             <p>
                 {{ _('New User?') }}
@@ -54,6 +58,7 @@
                 <button type="submit" class="submit-btn">{{ _('Login') }}</button>
             </form>
         </div>
+   </div>	
     {% endblock %}
  {{ moment.include_moment() }}
  {{ moment.lang(g.locale) }}
