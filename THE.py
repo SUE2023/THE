@@ -4,6 +4,7 @@ import sqlalchemy as sa
 import sqlalchemy.orm as so
 from app import create_app, db
 from app.models import User
+from app import cli
 
 app = create_app()
 
