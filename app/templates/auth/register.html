@@ -1,7 +1,12 @@
 {% extends "auth/login.html" %}
 
 {% block content %}
-    <div class="register-container">
+
+<div class="page-container">
+   <div class="logo-container">
+        <img src="{{ url_for('static', filename='images/DRSapp logo.png') }}" alt="Logo" class="centered-logo">
+   </div>
+   <div class="register-container">
         <h1>{{ _('Register') }}</h1>
         <p>
             {{ _('Already have an account?') }}
@@ -41,4 +46,3 @@
         </form>
     </div>
 {% endblock %}
-
