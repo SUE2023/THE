@@ -31,8 +31,8 @@
                 {% endfor %}
             </div>
             <div class="form-group">
-                <label for="confirm_password">{{ _('Confirm Password') }}</label>
-                {{ form.confirm_password(id="confirm_password") }}
+                <label for="form.password2">{{ _('Confirm Password') }}</label>
+                {{ form.password2(id="password2") }}
                 {% for error in form.confirm_password.errors %}
                     <span class="error">{{ error }}</span>
                 {% endfor %}
