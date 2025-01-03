@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """ User database model"""
-
-from datetime import timedelta
+from datetime import datetime, timezone, timedelta
+from hashlib import md5
 from flask import current_app, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
@@ -39,7 +39,7 @@ class PaginatedAPIMixin(object):
         return data
 
 
-class User(UPaginatedAPIMixin, serMixin, db.Model):
+class User(PaginatedAPIMixin, UserMixin, db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     username: so.Mapped[str] = so.mapped_column(sa.String(64), index=True,
                                                 unique=True)
@@ -100,7 +100,7 @@ class User(UPaginatedAPIMixin, serMixin, db.Model):
         if new_user and 'password' in data:
             self.set_password(data['password'])
 
-     def get_token(self, expires_in=3600):
+    def get_token(self, expires_in=3600):
         now = datetime.now(timezone.utc)
         if self.token and self.token_expiration.replace(
                 tzinfo=timezone.utc) > now + timedelta(seconds=60):
