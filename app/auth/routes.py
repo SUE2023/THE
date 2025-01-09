@@ -15,20 +15,31 @@ from app.auth.email import send_password_reset_email
 
 @bp.route('/login', methods=['GET', 'POST'])
 def login():
+    # Redirect to dashboard if user is already logged in
     if current_user.is_authenticated:
-        return redirect(url_for('main.index'))
+        return redirect(url_for('main.dashboard'))
+    
     form = LoginForm()
     if form.validate_on_submit():
+        # Validate user credentials
         user = db.session.scalar(
             sa.select(User).where(User.username == form.username.data))
         if user is None or not user.check_password(form.password.data):
-            flash(_('Invalid username or password'))
+            flash(_('Invalid username or password'), category='error')
             return redirect(url_for('auth.login'))
+        
+        # Log the user in
         login_user(user, remember=form.remember_me.data)
+        
+        # Determine the next page to redirect to
         next_page = request.args.get('next')
-        if not next_page or urlsplit(next_page).netloc != '':
-            next_page = url_for('main.index')
+        # Ensure `next_page` is within the same domain to prevent open redirects
+        if not next_page or urlparse(next_page).netloc != '':
+            next_page = url_for('main.dashboard')
+        
         return redirect(next_page)
+    
+    # Render the login page
     return render_template('auth/login.html', title=_('Sign In'), form=form)
 
 
