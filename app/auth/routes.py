@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Routes Logic"""
 from flask import render_template, redirect, url_for, flash, request
-from urllib.parse import urlsplit
+from urllib.parse import urlparse, urlsplit
 from flask_login import login_user, logout_user, current_user
 from flask_babel import _
 import sqlalchemy as sa
