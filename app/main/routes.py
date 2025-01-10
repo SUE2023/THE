@@ -8,7 +8,7 @@ from flask_babel import _, get_locale
 import sqlalchemy as sa
 from app import db
 from app.main.forms import EditProfileForm, EmptyForm, SearchForm
-from app.models import User, Planner, Resource, Contact, Communication  # Import of all required models
+from app.models import User, CalendarEvent # Planner, Resource, Contact, Communication  # Import of all required models
 from app.main import bp
 
 
