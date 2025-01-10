@@ -9,10 +9,14 @@ from flask_login import UserMixin
 import json
 import secrets
 from time import time
-from typing import Optional
 import sqlalchemy as sa
 import sqlalchemy.orm as so
 from app import db, login
+from typing import Optional, List
+from sqlalchemy import String, Text, ForeignKey
+from sqlalchemy.orm import relationship
+
+
 
 class PaginatedAPIMixin(object):
     @staticmethod
@@ -49,10 +53,13 @@ class CalendarEvent(db.Model):
     is_recurring: so.Mapped[bool] = so.mapped_column(default=False)
     recurrence_pattern: so.Mapped[Optional[str]] = so.mapped_column(sa.String(64))  # E.g., 'daily', 'weekly', etc.
     created_at: so.Mapped[datetime] = so.mapped_column(default=lambda: datetime.now(timezone.utc))
-    updated_at: so.Mapped[datetime] = so.mapped_column(default=lambda: datetime.now(timezone.utc),
-                                                       onupdate=lambda: datetime.now(timezone.utc))
+    updated_at: so.Mapped[datetime] = so.mapped_column(
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc)
+    )
 
     def to_dict(self):
+        """Convert CalendarEvent instance to dictionary for JSON serialization."""
         return {
             'id': self.id,
             'title': self.title,
@@ -65,10 +72,17 @@ class CalendarEvent(db.Model):
             'updated_at': self.updated_at.isoformat()
         }
 
-    def from_dict(self, data):
-        for field in ['title', 'description', 'start_time', 'end_time', 'is_recurring', 'recurrence_pattern']:
+    def from_dict(self, data, include_fields=None):
+        """Update instance attributes from a dictionary with field restrictions."""
+        include_fields = include_fields or []
+        allowed_fields = {
+            'title', 'description', 'start_time', 'end_time',
+            'is_recurring', 'recurrence_pattern'
+        }
+        fields_to_update = allowed_fields.intersection(include_fields)
+        for field in fields_to_update:
             if field in data:
-                setattr(self, field, data[field])
+                setattr(self, field, data[field]
 
 
 class User(PaginatedAPIMixin, UserMixin, db.Model):
@@ -88,6 +102,7 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
     calendar_events: so.WriteOnlyMapped[List['CalendarEvent']] = so.relationship(
         'CalendarEvent', backref='user', lazy='dynamic'
     )
+
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
