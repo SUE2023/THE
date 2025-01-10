@@ -11,6 +11,7 @@ from app.main.forms import EditProfileForm, EmptyForm, SearchForm
 from app.models import User, Planner, Resource, Contact, Communication  # Import of all required models
 from app.main import bp
 
+
 @bp.before_app_request
 def before_request():
     if current_user.is_authenticated:
@@ -84,6 +85,12 @@ def index():
         communications_received=communications_received
     )
 
+
+@bp.route('/dashboard/planner')
+@login_required
+def planner():
+    # Render the calendar page
+    return render_template('planner.html', title='Planner')
 
 @bp.route('/search')
 @login_required
