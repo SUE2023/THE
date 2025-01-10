@@ -82,7 +82,7 @@ class CalendarEvent(db.Model):
         fields_to_update = allowed_fields.intersection(include_fields)
         for field in fields_to_update:
             if field in data:
-                setattr(self, field, data[field]
+                setattr(self, field, data[field])
 
 
 class User(PaginatedAPIMixin, UserMixin, db.Model):
