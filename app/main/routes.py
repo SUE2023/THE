@@ -84,7 +84,6 @@ def index():
         communications_received=communications_received
     )
 
-from flask import request
 
 @bp.route('/search')
 @login_required
