@@ -89,8 +89,23 @@ def index():
 @bp.route('/dashboard/planner')
 @login_required
 def planner():
-    # Render the calendar page
-    return render_template('planner.html', title='Planner')
+    # Fetch the user's calendar events
+    events = current_user.calendar_events.order_by(CalendarEvent.start_time).all()
+
+    # Prepare events data for rendering
+    event_data = [
+        {
+            'title': event.title,
+            'description': event.description,
+            'start': event.start_time.isoformat(),
+            'end': event.end_time.isoformat()
+        }
+        for event in events
+    ]
+
+    # Render the calendar page and pass the events
+    return render_template('planner.html', title='Planner', events=event_data)
+
 
 @bp.route('/search')
 @login_required
