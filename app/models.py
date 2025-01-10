@@ -39,6 +39,38 @@ class PaginatedAPIMixin(object):
         return data
 
 
+class CalendarEvent(db.Model):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey('user.id'), nullable=False)
+    title: so.Mapped[str] = so.mapped_column(sa.String(128), nullable=False)
+    description: so.Mapped[Optional[str]] = so.mapped_column(sa.Text)
+    start_time: so.Mapped[datetime] = so.mapped_column(nullable=False)
+    end_time: so.Mapped[datetime] = so.mapped_column(nullable=False)
+    is_recurring: so.Mapped[bool] = so.mapped_column(default=False)
+    recurrence_pattern: so.Mapped[Optional[str]] = so.mapped_column(sa.String(64))  # E.g., 'daily', 'weekly', etc.
+    created_at: so.Mapped[datetime] = so.mapped_column(default=lambda: datetime.now(timezone.utc))
+    updated_at: so.Mapped[datetime] = so.mapped_column(default=lambda: datetime.now(timezone.utc),
+                                                       onupdate=lambda: datetime.now(timezone.utc))
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'start_time': self.start_time.isoformat(),
+            'end_time': self.end_time.isoformat(),
+            'is_recurring': self.is_recurring,
+            'recurrence_pattern': self.recurrence_pattern,
+            'created_at': self.created_at.isoformat(),
+            'updated_at': self.updated_at.isoformat()
+        }
+
+    def from_dict(self, data):
+        for field in ['title', 'description', 'start_time', 'end_time', 'is_recurring', 'recurrence_pattern']:
+            if field in data:
+                setattr(self, field, data[field])
+
+
 class User(PaginatedAPIMixin, UserMixin, db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     username: so.Mapped[str] = so.mapped_column(sa.String(64), index=True,
@@ -53,6 +85,9 @@ class User(PaginatedAPIMixin, UserMixin, db.Model):
     token: so.Mapped[Optional[str]] = so.mapped_column(
         sa.String(32), index=True, unique=True)
     token_expiration: so.Mapped[Optional[datetime]]
+    calendar_events: so.WriteOnlyMapped[List['CalendarEvent']] = so.relationship(
+        'CalendarEvent', backref='user', lazy='dynamic'
+    )
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
