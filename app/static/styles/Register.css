@@ -1,3 +1,28 @@
+.page-container {
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    align-items: center;    /* Center elements horizontally */
+    margin-top: 50px;       /* Optional: Add spacing from the top of the page */
+}
+
+.logo-container {
+    margin-bottom: 20px;    /* Add space between the logo and the sign-in container */
+}
+
+.centered-logo {
+    height: 40px;           /* Adjust logo size */
+}
+
+.register-container {
+    width: 400px;           /* Adjust the width of the sign-in form */
+    padding: 20px;
+    border: 1px solid #ccc; /* Optional: Add a border to the sign-in form */
+    border-radius: 8px;     /* Optional: Round the corners */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow */
+}
+
+
+/*
 .register-page .register-container {
     width: 100%;
     max-width: 400px;
@@ -7,7 +32,7 @@
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
-
+*/
 .register-page h1 {
     text-align: center;
     color: #333333;
