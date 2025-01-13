@@ -19,8 +19,8 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # MongoDB Configuration
-    MONGODB_URI = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
-    MONGODB_DB_NAME = os.environ.get('MONGODB_DB_NAME', 'mydatabase')
+    MONGODB_URI = os.environ.get("MONGODB_URI", "mongodb://localhost:27017/")
+    MONGODB_DB_NAME = os.environ.get("MONGODB_DB_NAME", "mydatabase")
 
     MAIL_SERVER = os.environ.get("MAIL_SERVER")
     MAIL_PORT = int(os.environ.get("MAIL_PORT") or 25)
@@ -29,3 +29,20 @@ class Config:
     MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
     ADMINS = ["your-email@example.com"]
     LANGUAGES = ["en", "es"]
+
+    # App configuration settings
+    app.config["UPLOAD_FOLDER"] = "uploads"  # Directory for storing uploaded files
+    app.config["MAX_CONTENT_LENGTH"] = 16 * 1024 * 1024  # Max upload size: 16 MB
+    app.config["ALLOWED_EXTENSIONS"] = {
+        "png",
+        "jpg",
+        "jpeg",
+        "gif",
+        "pdf",
+        "docx",
+        "txt",
+    }  # Allowed file types
+
+    # Create the upload folder if it doesn't exist
+
+    os.makedirs(app.config["UPLOAD_FOLDER"], exist_ok=True)
