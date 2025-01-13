@@ -13,6 +13,7 @@ from flask_moment import Moment
 from flask_babel import Babel, lazy_gettext as _l
 from config import Config
 
+load_dotenv()  # Load variables from .env
 
 def get_locale():
     return request.accept_languages.best_match(current_app.config["LANGUAGES"])
