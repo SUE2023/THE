@@ -6,6 +6,7 @@ import os
 from flask import Flask, request, current_app
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from pymongo import MongoClient
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_moment import Moment
@@ -16,8 +17,12 @@ from config import Config
 def get_locale():
     return request.accept_languages.best_match(current_app.config["LANGUAGES"])
 
-
+# Initialize SQLAlchemy
 db = SQLAlchemy()
+
+# MongoDB Initialization
+mongo_client = None
+
 migrate = Migrate()
 login = LoginManager()
 login.login_view = "auth.login"
@@ -31,7 +36,17 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
+    # Initialize SQLAlchemy
     db.init_app(app)
+
+    # Initialize MongoDB
+    global mongo_client
+    mongo_client = MongoClient(app.config['MONGODB_URI'])
+    app.mongo_db = mongo_client[app.config['MONGODB_DB_NAME']]
+
+    with app.app_context():
+        db.create_all()
+
     migrate.init_app(app, db)
     login.init_app(app)
     mail.init_app(app)
