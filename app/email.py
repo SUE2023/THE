@@ -5,11 +5,15 @@ from flask import current_app
 from flask_mail import Message
 from app import mail
 
+
 def send_async_email(app, msg):
     with app.app_context():
         mail.send(msg)
 
-def send_email(subject, sender, recipients, cc=None, bcc=None, text_body=None, html_body=None):
+
+def send_email(
+    subject, sender, recipients, cc=None, bcc=None, text_body=None, html_body=None
+):
     """
     Sends an email using Flask-Mail, either synchronously or asynchronously.
 
@@ -37,13 +41,18 @@ def send_email(subject, sender, recipients, cc=None, bcc=None, text_body=None, h
             if len(attachment) == 3:  # Ensure correct format
                 msg.attach(*attachment)
             else:
-                raise ValueError("Each attachment must be a tuple (filename, content, type)")
+                raise ValueError(
+                    "Each attachment must be a tuple (filename, content, type)"
+                )
 
     # Send email
     if sync:
         mail.send(msg)
     else:
-        Thread(target=send_async_email, args=(current_app._get_current_object(), msg)).start()
+        Thread(
+            target=send_async_email, args=(current_app._get_current_object(), msg)
+        ).start()
+
 
 def send_async_email(app, msg):
     """
