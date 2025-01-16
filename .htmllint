@@ -1,0 +1,5 @@
+https://github.com/htmlhint/HTMLHint?tab=readme-ov-file#local-installation-and-usage
+
+local usage: 
+$ ./node_modules/.bin/htmlhint www/index.html
+$ ./node_modules/.bin/htmlhint www/**/*.html

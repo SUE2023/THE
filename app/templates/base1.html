@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="Office, intranet, workspace">
+    <meta name="description" content="Office intranet, Office WorkPlace">
+    <meta name="author" content="SE Department">
+    {% if title %}
+        <title>{{ title }} - Office</title>
+    {% else %}
+        <title>{{ _('Welcome to the Office') }}</title>
+    {% endif %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/S.css') }}">
+    {% if request.endpoint and 'login' in request.endpoint %} <!--{% if 'login' in request.endpoint %} -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='styles/Login.css') }}">
+    {% elif request.endpoint and 'register' in request.endpoint %} <!--{% elif 'register' in request.endpoint %} -->
+		<link rel="stylesheet" href="{{ url_for('static', filename='styles/Register.css') }}">
+    {% elif request.endpoint and 'reset_password' in request.endpoint %}  <!--{% elif 'reset password' in request.endpoint %}	-->
+		<link rel="stylesheet" href="{{ url_for('static', filename='styles/Reset Password.css') }}">
+    {% endif %}
+</head>
+<body class="{% block body_class %}{% endblock %}">
+	<div>
+		<!-- Vertical Navigation Bar -->
+		<nav class="vertical-nav" id="menu">
+			<img src="{{ url_for('static', filename='images/DRSapp_logo.png') }}" alt="{{ _('Office Logo') }}" class="logo">
+			<button class="menu-button" onclick="toggleMenu()" aria-label="{{ _('Toggle Menu') }}">☰</button>
+			<ul>
+				{% if current_user.is_anonymous %}
+					<li><a href="{{ url_for('auth.login') }}">{{ _('Login') }}</a></li>
+				{% else %}
+					<li><a href="{{ url_for('main.messages') }}">{{ _('Messages') }}</a></li>
+					<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Home') }}</a></li>
+					<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Planner') }}</a></li>
+					<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Message') }}</a></li>
+					<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Resources') }}</a></li>
+					<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Compose') }}</a></li>
+					<div class="dropdown-menu">
+						<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Raise') }}</a></li>
+						<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Lower') }}</a></li>
+						<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Alignment') }}</a></li>
+						<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Alert') }}</a></li>
+						<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Updates') }}</a></li>
+						<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Socialize') }}</a></li>
+					</div>
+					<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('About') }}</a></li>
+					<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Services') }}</a></li>
+					<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Portfolio') }}</a></li>
+					<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Contacts') }}</a></li>
+					<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Teams') }}</a></li>
+					<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Blogs') }}</a></li>
+					<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Terms of Service') }}</a></li>
+					<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Private Policies') }}</a></li>
+					<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Alerts') }}</a></li>
+					<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('News') }}</a></li>
+					<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Social') }}</a></li>
+					<li><a href="{{ url_for('main.user', username=current_user.username) }}">{{ _('Profile') }}</a></li>
+					<li><a href="{{ url_for('auth.logout') }}">{{ _('Logout') }}</a></li>	
+				{% endif %}
+			</ul>
+				{% if g.search_form %}
+				<form class="search-form" method="get" action="{{ url_for('main.search') }}">
+					<div class="form-group">
+						<label for="search-query" class="sr-only">{{ _('Search') }}</label>
+						{{ g.search_form.q(size=20, class='form-control', id='search-query', name='q', placeholder=g.search_form.q.label.text) }}
+					</div>
+					<button type="submit" class="btn btn-primary">{{ _('Search') }}</button>
+				</form>
+				{% endif %}	
+		</nav>
+	</div>
+	
+	<div>
+		<!-- Main Content -->
+		<main class="main-content">
+			<h1>{{ _('Welcome to the Office') }}</h1>
+			<p>{{ _('Scroll the navigation bar on the left to see all options!') }}</p>
+			<p>{{ _('The only constant is change; it occurs daily. Let it be peaceful.') }}</p>
+			<br>
+			<br>
+			<h2>{{ _('Task Management for Today') }}</h2>
+			<p>{{ _('Below are tasks received and allocated throughout the day:') }}</p>
+			
+			<h3>{{ _('Received Delegations') }}</h3>
+			<ul>
+				{% for task in tasks.superior_tasks %}
+					<li>{{ task.description }} 
+						<span class="timestamp">{{ _('Received on: ') }} {{ task.timestamp }}</span>
+					</li>
+				{% else %}
+					<li>{{ _('No tasks from superiors yet.') }}</li>
+				{% endfor %}
+			</ul>
+
+			<h3>{{ _('Tasks from Colleagues') }}</h3>
+			<ul>
+				{% for task in tasks.colleague_tasks %}
+					<li>{{ task.description }} 
+						<span class="timestamp">{{ _('Received on: ') }} {{ task.timestamp }}</span>
+					</li>
+				{% else %}
+					<li>{{ _('No tasks from colleagues yet.') }}</li>
+				{% endfor %}
+			</ul>
+
+			<h3>{{ _('Self-Allocated Tasks') }}</h3>
+			<ul>
+				{% for task in tasks.self_assigned_tasks %}
+					<li>{{ task.description }} 
+						<span class="timestamp">{{ _('Assigned on: ') }} {{ task.timestamp }}</span>
+					</li>
+				{% else %}
+					<li>{{ _('No self-allocated tasks yet.') }}</li>
+				{% endfor %}
+			</ul>
+		</main>
+	</div>
+    <footer>
+        <p>&copy; {{ _('Office 2024') }}</p>
+    </footer>
+{{ moment.include_moment() }}
+{{ moment.locale(g.locale) }}  <!--{{ moment.lang(g.locale) }} -->
+<script src="{{ url_for('static', filename='scripts/J.js') }}" type="text/javascript"></script>
+</body>
+</html>

@@ -13,11 +13,9 @@ import sqlalchemy as sa
 import sqlalchemy.orm as so
 from app import db, login
 from typing import Optional, List, Dict
-from sqlalchemy import Column, String, Integer, Text, ForeignKey
+from sqlalchemy import Column, String, Integer, Text, ForeignKey, DateTime, Integer
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
-
-Base = declarative_base()
 
 
 class PaginatedAPIMixin(object):
@@ -93,83 +91,6 @@ class CalendarEvent(db.Model):
             "is_recurring",
             "recurrence_pattern",
         }
-        fields_to_update = allowed_fields.intersection(include_fields)
-        for field in fields_to_update:
-            if field in data:
-                setattr(self, field, data[field])
-
-
-class Resource(Base):
-    """Model for resources stored in SQLite."""
-    __tablename__ = 'resources'
-    id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("user.id"), nullable=False)
-    title = Column(String(128), nullable=False)
-    description = Column(Text, nullable=True)
-    image_id = Column(String(24), nullable=True)  # Store MongoDB image ID here
-
-
-
-class Contact(db.Model):
-    """Model representing organizational contacts."""
-
-    id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    user_id: so.Mapped[int] = so.mapped_column(sa.ForeignKey("user.id"), nullable=False)
-    name: so.Mapped[str] = so.mapped_column(sa.String(128), nullable=False)
-    phone_number: so.Mapped[Optional[str]] = so.mapped_column(
-        sa.String(15), nullable=True
-    )
-    email: so.Mapped[Optional[str]] = so.mapped_column(sa.String(128), nullable=True)
-    organization: so.Mapped[Optional[str]] = so.mapped_column(
-        sa.String(128), nullable=True
-    )
-
-    def to_dict(self) -> Dict:
-        """Convert Contact instance to dictionary for JSON serialization."""
-        return {
-            "id": self.id,
-            "user_id": self.user_id,
-            "name": self.name,
-            "phone_number": self.phone_number,
-            "email": self.email,
-            "organization": self.organization,
-        }
-
-    def from_dict(self, data: Dict, include_fields: Optional[List[str]] = None):
-        """Update instance attributes from a dictionary."""
-        include_fields = include_fields or []
-        allowed_fields = {"name", "phone_number", "email", "organization"}
-        fields_to_update = allowed_fields.intersection(include_fields)
-        for field in fields_to_update:
-            if field in data:
-                setattr(self, field, data[field])
-
-
-class Communication(db.Model):
-    """Model representing user communication logs."""
-
-    id: so.Mapped[int] = so.mapped_column(primary_key=True)
-    username: so.Mapped[str] = so.mapped_column(sa.String(64), index=True, unique=True)
-    sent_message: so.Mapped[Optional[str]] = so.mapped_column(
-        sa.String(140), nullable=True
-    )
-    received_at: so.Mapped[datetime] = so.mapped_column(
-        default=lambda: datetime.now(timezone.utc), nullable=False
-    )
-
-    def to_dict(self) -> Dict:
-        """Convert Communication instance to dictionary for JSON serialization."""
-        return {
-            "id": self.id,
-            "username": self.username,
-            "sent_message": self.sent_message,
-            "received_at": self.received_at.isoformat(),
-        }
-
-    def from_dict(self, data: Dict, include_fields: Optional[List[str]] = None):
-        """Update instance attributes from a dictionary."""
-        include_fields = include_fields or []
-        allowed_fields = {"username", "sent_message"}
         fields_to_update = allowed_fields.intersection(include_fields)
         for field in fields_to_update:
             if field in data:

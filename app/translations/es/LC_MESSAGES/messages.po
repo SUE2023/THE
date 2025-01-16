@@ -1,0 +1,181 @@
+# Spanish translations for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-01-02 20:23+0000\n"
+"PO-Revision-Date: 2025-01-02 20:23+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: es\n"
+"Language-Team: es <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.16.0\n"
+
+#: app/__init__.py:22
+msgid "Please log in to access this page."
+msgstr ""
+
+#: app/auth/email.py:10
+msgid "[Microblog] Reset Your Password"
+msgstr ""
+
+#: app/auth/forms.py:12 app/auth/forms.py:19 app/main/forms.py:14
+#: app/templates/auth/register.html:13
+msgid "Username"
+msgstr ""
+
+#: app/auth/forms.py:13 app/auth/forms.py:21 app/auth/forms.py:46
+#: app/templates/auth/login.html:48 app/templates/auth/register.html:27
+msgid "Password"
+msgstr ""
+
+#: app/auth/forms.py:14
+msgid "Remember Me"
+msgstr ""
+
+#: app/auth/forms.py:15 app/auth/routes.py:32 app/templates/auth/login.html:29
+msgid "Sign In"
+msgstr ""
+
+#: app/auth/forms.py:20 app/auth/forms.py:41
+msgid "Email"
+msgstr ""
+
+#: app/auth/forms.py:23 app/auth/forms.py:48
+msgid "Repeat Password"
+msgstr ""
+
+#: app/auth/forms.py:25 app/auth/routes.py:53
+#: app/templates/auth/register.html:5 app/templates/auth/register.html:40
+msgid "Register"
+msgstr ""
+
+#: app/auth/forms.py:31 app/main/forms.py:28
+msgid "Please use a different username."
+msgstr ""
+
+#: app/auth/forms.py:37
+msgid "Please use a different email address."
+msgstr ""
+
+#: app/auth/forms.py:42 app/auth/forms.py:50
+msgid "Request Password Reset"
+msgstr ""
+
+#: app/auth/routes.py:25
+msgid "Invalid username or password"
+msgstr ""
+
+#: app/auth/routes.py:51
+msgid "Congratulations, you are now a registered user!"
+msgstr ""
+
+#: app/auth/routes.py:68
+msgid "Check your email for the instructions to reset your password"
+msgstr ""
+
+#: app/auth/routes.py:71 app/templates/auth/reset_password.html:26
+msgid "Reset Password"
+msgstr ""
+
+#: app/auth/routes.py:85
+msgid "Your password has been reset."
+msgstr ""
+
+#: app/main/forms.py:15
+msgid "About me"
+msgstr ""
+
+#: app/main/forms.py:17
+msgid "Submit"
+msgstr ""
+
+#: app/main/routes.py:29
+msgid "Home"
+msgstr ""
+
+#: app/main/routes.py:40
+msgid "Your changes have been saved."
+msgstr ""
+
+#: app/main/routes.py:45
+msgid "Edit Profile"
+msgstr ""
+
+#: app/templates/index.html:6 app/templates/user.html:5
+#, python-format
+msgid "Hi, %(username)s!"
+msgstr ""
+
+#: app/templates/auth/login.html:13
+msgid "Welcome to the Office"
+msgstr ""
+
+#: app/templates/auth/login.html:31
+msgid "New User?"
+msgstr ""
+
+#: app/templates/auth/login.html:32
+msgid "Click to Register!"
+msgstr ""
+
+#: app/templates/auth/login.html:35
+msgid "Forgot Your Password?"
+msgstr ""
+
+#: app/templates/auth/login.html:36
+msgid "Click to Reset It"
+msgstr ""
+
+#: app/templates/auth/login.html:41 app/templates/auth/register.html:20
+#: app/templates/auth/reset_password_request.html:25
+msgid "Email Address"
+msgstr ""
+
+#: app/templates/auth/login.html:54
+msgid "Login"
+msgstr ""
+
+#: app/templates/auth/register.html:7
+msgid "Already have an account?"
+msgstr ""
+
+#: app/templates/auth/register.html:8
+msgid "Click to Sign In!"
+msgstr ""
+
+#: app/templates/auth/register.html:34
+msgid "Confirm Password"
+msgstr ""
+
+#: app/templates/auth/reset_password.html:5
+msgid "Reset Your Password"
+msgstr ""
+
+#: app/templates/auth/reset_password.html:11
+msgid "New Password"
+msgstr ""
+
+#: app/templates/auth/reset_password.html:19
+msgid "Confirm New Password"
+msgstr ""
+
+#: app/templates/auth/reset_password_request.html:5
+msgid "Reset Password Request"
+msgstr ""
+
+#: app/templates/auth/reset_password_request.html:6
+msgid "Enter your email address to receive a password reset link."
+msgstr ""
+
+#: app/templates/auth/reset_password_request.html:33
+msgid "Send Reset Link"
+msgstr ""
+

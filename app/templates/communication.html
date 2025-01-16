@@ -1,0 +1,39 @@
+{% extends "dashboard.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>{{ _("Communication") }}</h1>
+
+    <div class="communication-list">
+        <ul>
+            {% for communication in list %}
+                <li>
+                    <strong>{{ _("Contact Name:") }}</strong> {{ communication.contact_name }}<br>
+                    <strong>{{ _("Message Type:") }}</strong> {{ communication.message_type }}<br>
+                    <strong>{{ _("Content:") }}</strong> {{ communication.content }}<br>
+                    <strong>{{ _("Timestamp:") }}</strong> {{ communication.timestamp }}<br>
+                    <strong>{{ _("Organization:") }}</strong> {{ communication.organization }}<br>
+                    <strong>{{ _("Department:") }}</strong> {{ communication.department }}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="upload-form">
+        <h2>{{ _("Upload Attachment") }}</h2>
+        <form action="{{ url_for('main.upload_attachment') }}" method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="communication_id">{{ _("Communication ID:") }}</label>
+                <input type="text" id="communication_id" name="communication_id" class="form-control">
+            </div>
+            <div class="form-group">
+                <label for="file">{{ _("File:") }}</label>
+                <input type="file" id="file" name="file" class="form-control">
+            </div>
+            <button type="submit" class="btn btn-primary">{{ _("Upload") }}</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+

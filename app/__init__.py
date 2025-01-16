@@ -13,7 +13,6 @@ from flask_moment import Moment
 from flask_babel import Babel, lazy_gettext as _l
 from config import Config
 
-load_dotenv()  # Load variables from .env
 
 def get_locale():
     return request.accept_languages.best_match(current_app.config["LANGUAGES"])
@@ -31,6 +30,7 @@ login.login_message = _l("Please log in to access this page.")
 mail = Mail()
 moment = Moment()
 babel = Babel()
+#load_dotenv()  # Load variables from .env
 
 
 def create_app(config_class=Config):
@@ -64,11 +64,15 @@ def create_app(config_class=Config):
 
     from app.main import bp as main_bp
 
-    app.register_blueprint(main_bp)
+    app.register_blueprint(main_bp, url_prefix="/main")
 
     from app.cli import bp as cli_bp
 
     app.register_blueprint(cli_bp)
+
+    from uploads import bp as uploads_bp
+    # Register the uploads blueprint
+    app.register_blueprint(uploads_bp, url_prefix="/uploads")
 
     from app.api import bp as api_bp
 

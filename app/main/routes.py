@@ -11,14 +11,9 @@ from app.main.forms import EditProfileForm, EmptyForm, SearchForm
 from app.models import (
     User,
     CalendarEvent,
-    Resource,
-    Contact,
-    Communication,
-    Contact,
     # ContentModel,
 )
 from app.main import bp
-from app.services.resource_service import ResourceService
 
 
 @bp.before_app_request
@@ -32,6 +27,14 @@ def before_request():
 
 @bp.route("/", methods=["GET", "POST"])
 @bp.route("/index", methods=["GET", "POST"])
+def index():
+    """ Landing Page for a standalone application for login to application"""
+    if current_user.is_authenticated:
+        return redirect(url_for("main.dashboard"))
+    return redirect(url_for("auth.login"))
+
+
+@bp.route("/dashboard")
 @login_required
 def dashboard():
     """Dashboard page with dynamic sections."""
@@ -41,39 +44,8 @@ def dashboard():
         session["visited_dashboard"] = True
 
     # Fetch calendar events
-    calendar_events = db.session.scalars(
+    calendarevents = db.session.scalars(
         sa.select(CalendarEvent).where(CalendarEvent.user_id == current_user.id)
-    ).all()
-
-    # Fetch resources (photos and documents)
-    photo_gallery = db.session.scalars(
-        sa.select(Resource).where(
-            Resource.user_id == current_user.id, Resource.resource_type == "photo"
-        )
-    ).all()
-
-    documents = db.session.scalars(
-        sa.select(Resource).where(
-            Resource.user_id == current_user.id, Resource.resource_type == "document"
-        )
-    ).all()
-
-    # Fetch user's contacts
-    contacts = db.session.scalars(
-        sa.select(Contact).where(Contact.user_id == current_user.id)
-    ).all()
-
-    # Fetch recent communications (sent and received)
-    communications_sent = db.session.scalars(
-        sa.select(Communication)
-        .where(Communication.sender_id == current_user.id)
-        .order_by(Communication.timestamp.desc())
-    ).all()
-
-    communications_received = db.session.scalars(
-        sa.select(Communication)
-        .where(Communication.receiver_id == current_user.id)
-        .order_by(Communication.timestamp.desc())
     ).all()
 
     # Determine the section to display
@@ -84,20 +56,24 @@ def dashboard():
         "dashboard.html",
         title=_("Dashboard"),
         section=section,
-        calendar_events=calendar_events,
-        photo_gallery=photo_gallery,
-        documents=documents,
-        contacts=contacts,
-        communications_sent=communications_sent,
-        communications_received=communications_received,
+        calendarevents=calendarevents
     )
 
-
-@bp.route("/dashboard/calendar_events")
+@bp.route("/dashboard/home")
+@login_required     
+def dashboard_home():
+    pass
+    
+@bp.route("/dashboard/planner")
+@login_required    
+def dashboard_planner():
+    pass
+    
+@bp.route("/dashboard/calendarevents")
 @login_required
-def calendar_events():
+def calendarevents():
     # Fetch the user's calendar events
-    events = current_user.calendar_events.order_by(CalendarEvent.start_time).all()
+    events = current_user.calendarevents.order_by(CalendarEvent.start_time).all()
 
     # Prepare events data for rendering
     event_data = [
@@ -116,139 +92,31 @@ def calendar_events():
     )
 
 
-@bp.route("/dashboard/resources", methods=["POST"])
+@bp.route("/dashboard/edit_profile", methods=["GET", "POST"])
 @login_required
-def create_resource():
-    """Handle creating a new resource."""
-    data = request.get_json()
-    image = request.files.get("image").read() if "image" in request.files else None
-
-    try:
-        # Validate input data
-        if Resource.validate_data(data):
-            resource = ResourceService.create_resource(data, image)
-            return jsonify(resource.to_dict()), 201
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 400
-    except Exception as e:
-        return jsonify({"error": "An error occurred."}), 500
-
-
-@bp.route("/dashboard/resources/<int:resource_id>", methods=["GET"])
-@login_required
-def get_resource(resource_id):
-    """Retrieve a resource by ID."""
-    try:
-        resource = ResourceService.get_resource(resource_id)
-        if not resource:
-            return jsonify({"error": "Resource not found."}), 404
-        return jsonify(resource), 200
-    except Exception as e:
-        return jsonify({"error": "An error occurred."}), 500
-
-
-from datetime import datetime
-
-
-@bp.route("/dashboard/contact", methods=["GET"])
-@login_required
-def dashboard_contact():
-    """Retrieve and display the contact list of staff and organizations."""
-    contacts = Contact.query.all()
-    contact_list = [
-        {
-            "id": contact.id,
-            "name": contact.name,
-            "phone": contact.phone,
-            "email": contact.email,
-            "organization": contact.organization,
-            "department": contact.department,
-        }
-        for contact in contacts
-    ]
-    return jsonify(
-        contact_list
-    )  # You can replace with `render_template` for an HTML response
-
-
-@bp.route("/dashboard/communicate", methods=["GET"])
-@login_required
-def dashboard_communicate():
-    """Retrieve and display communication with contacts."""
-    communications = Communication.query.all()
-    communication_list = [
-        {
-            "id": communication.id,
-            "contact_name": communication.contact.name,
-            "message_type": communication.message_type,
-            "content": communication.content,
-            "timestamp": communication.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
-            "organization": communication.contact.organization,
-            "department": communication.contact.department,
-        }
-        for communication in communications
-    ]
-    return jsonify(
-        communication_list
-    )  # You can replace with `render_template` for an HTML response
-
-
-@bp.route("/dashboard/communicate/upload", methods=["POST"])
-@login_required
-def upload_attachment():
-    """Upload an attachment for a specific communication."""
-    if "file" not in request.files or "communication_id" not in request.form:
-        return jsonify({"error": "File and communication_id are required"}), 400
-
-    file = request.files["file"]
-    communication_id = request.form["communication_id"]
-
-    if file and allowed_file(file.filename, app.config["ALLOWED_EXTENSIONS"]):
-        filename = file.filename
-        filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-        file.save(filepath)
-
-        # Save attachment metadata to the database
-        attachment = Attachment(
-            communication_id=communication_id,
-            filename=filename,
-            filetype=file.content_type,
-            filepath=filepath,
-        )
-        db.session.add(attachment)
+def editprofile():
+    form = EditProfileForm(current_user.username)
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.about_me = form.about_me.data
         db.session.commit()
+        flash(_("Your changes have been saved."), "success")
+        return redirect(url_for("main.edit_profile"))
+    elif request.method == "GET":
+        form.username.data = current_user.username
+        form.about_me.data = current_user.about_me
 
-        return (
-            jsonify(
-                {
-                    "message": "File uploaded successfully",
-                    "attachment": {
-                        "id": attachment.id,
-                        "filename": attachment.filename,
-                        "filetype": attachment.filetype,
-                        "filepath": attachment.filepath,
-                    },
-                }
-            ),
-            201,
-        )
-    else:
-        return jsonify({"error": "Invalid file type"}), 400
-
-
-@bp.route("/dashboard/communicate/download/<int:attachment_id>", methods=["GET"])
-def download_attachment(attachment_id):
-    """Download an attachment by its ID."""
-    attachment = Attachment.query.get(attachment_id)
-    if not attachment:
-        return jsonify({"error": "Attachment not found"}), 404
-
-    return send_from_directory(
-        directory=app.config["UPLOAD_FOLDER"],
-        path=attachment.filename,
-        as_attachment=True,
-        attachment_filename=attachment.filename,
+    return render_template(
+        "edit_profile.html",
+        title=_("Edit Profile"),
+        form=form,
     )
+
+@bp.route('/dashboard/profile/<username>')
+@login_required
+def profile(username):
+    user = User.query.filter_by(username=username).first_or_404()
+    return render_template('profile.html', user=user)
 
 
 @bp.route("/dashboard/search")
@@ -293,23 +161,9 @@ def search():
         pagination=paginated_results,  # Pagination metadata
     )
 
-
-@bp.route("/dashboard/edit_profile", methods=["GET", "POST"])
-@login_required
-def edit_profile():
-    form = EditProfileForm(current_user.username)
-    if form.validate_on_submit():
-        current_user.username = form.username.data
-        current_user.about_me = form.about_me.data
-        db.session.commit()
-        flash(_("Your changes have been saved."), "success")
-        return redirect(url_for("main.edit_profile"))
-    elif request.method == "GET":
-        form.username.data = current_user.username
-        form.about_me.data = current_user.about_me
-
-    return render_template(
-        "edit_profile.html",
-        title=_("Edit Profile"),
-        form=form,
-    )
+@bp.route("/logout")
+def logout():
+    """Logs out the user and redirects to the login page."""
+    logout_user()
+    flash(_("You have been logged out."))
+    return redirect(url_for("auth.login"))

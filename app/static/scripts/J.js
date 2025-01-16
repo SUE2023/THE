@@ -23,4 +23,4 @@ document.addEventListener('DOMContentLoaded', () => {
     calendar.render();
   }
 });
-
+{% endif %}
